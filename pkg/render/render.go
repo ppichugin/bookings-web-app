@@ -1,4 +1,4 @@
-package main
+package render
 
 import (
 	"fmt"
@@ -6,7 +6,8 @@ import (
 	"net/http"
 )
 
-func renderTemplate(w http.ResponseWriter, templateName string) {
+// RenderTemplate renders templates using htlm.Template
+func RenderTemplate(w http.ResponseWriter, templateName string) {
 	parsedTemplate, _ := template.ParseFiles("./templates/" + templateName)
 	err := parsedTemplate.Execute(w, nil)
 	if err != nil {
