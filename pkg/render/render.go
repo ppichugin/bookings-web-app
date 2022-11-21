@@ -2,28 +2,40 @@ package render
 
 import (
 	"bytes"
+	"github.com/ppichugin/booking-for-breakfast/pkg/config"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 )
 
+var functions = template.FuncMap{}
+var app *config.AppConfig
+
+// NewTemplates sets the config for the template package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
 // RenderTemplate renders templates using htlm.Template
 func RenderTemplate(w http.ResponseWriter, templateName string) {
-	// create a template cache
-	tc, err := createTemplate()
-	if err != nil {
-		log.Fatal(err)
+
+	var tc map[string]*template.Template
+	if app.UseCache {
+		// get the template cache from AppConfig
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplate()
 	}
 
 	// get requested template from cache
 	t, ok := tc[templateName]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("Could not get template from teh template cache")
 	}
 
 	buf := new(bytes.Buffer)
-	err = t.Execute(buf, nil)
+	err := t.Execute(buf, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -35,22 +47,22 @@ func RenderTemplate(w http.ResponseWriter, templateName string) {
 	}
 }
 
-func createTemplate() (map[string]*template.Template, error) {
+func CreateTemplate() (map[string]*template.Template, error) {
+
 	myCache := map[string]*template.Template{}
 
-	// get all the files named *.page.tmpl from ./templates
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
 	if err != nil {
 		return myCache, err
 	}
 
-	// range through all files
 	for _, page := range pages {
 		name := filepath.Base(page)
-		ts, err := template.New(name).ParseFiles(page)
+		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return myCache, err
 		}
+
 		matches, err := filepath.Glob("./templates/*.layout.tmpl")
 		if err != nil {
 			return myCache, err
@@ -65,5 +77,6 @@ func createTemplate() (map[string]*template.Template, error) {
 
 		myCache[name] = ts
 	}
+
 	return myCache, nil
 }
