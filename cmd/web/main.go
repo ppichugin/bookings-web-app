@@ -2,17 +2,30 @@ package main
 
 import (
 	"fmt"
+	"github.com/alexedwards/scs/v2"
 	"github.com/ppichugin/booking-for-breakfast/pkg/config"
 	"github.com/ppichugin/booking-for-breakfast/pkg/handlers"
 	"github.com/ppichugin/booking-for-breakfast/pkg/render"
 	"log"
 	"net/http"
+	"time"
 )
 
 const portNumber = ":8080"
 
+var app config.AppConfig
+var session *scs.SessionManager
+
 func main() {
-	var app config.AppConfig
+	//change this to true when in production
+	app.InProduction = false
+
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction //ssl not yet
+	app.Session = session
 
 	tc, err := render.CreateTemplate()
 	if err != nil {
