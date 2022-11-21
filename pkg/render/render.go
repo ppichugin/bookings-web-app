@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"github.com/ppichugin/booking-for-breakfast/pkg/config"
+	"github.com/ppichugin/booking-for-breakfast/pkg/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,8 +18,13 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-// RenderTemplate renders templates using htlm.Template
-func RenderTemplate(w http.ResponseWriter, templateName string) {
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	// add some data
+	return td
+}
+
+// RenderTemplate renders templates using html.Template
+func RenderTemplate(w http.ResponseWriter, templateName string, td *models.TemplateData) {
 
 	var tc map[string]*template.Template
 	if app.UseCache {
@@ -35,7 +41,8 @@ func RenderTemplate(w http.ResponseWriter, templateName string) {
 	}
 
 	buf := new(bytes.Buffer)
-	err := t.Execute(buf, nil)
+	td = AddDefaultData(td)
+	err := t.Execute(buf, td)
 	if err != nil {
 		log.Println(err)
 	}
