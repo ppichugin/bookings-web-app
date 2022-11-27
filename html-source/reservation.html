@@ -27,6 +27,14 @@
         .notie-container {
             box-shadow: none;
         }
+
+        .datepicker {
+            z-index: 10000;
+        }
+
+        .search-form {
+            max-width: 95%;
+        }
     </style>
 </head>
 
@@ -155,7 +163,28 @@
     })();
 
     document.getElementById("colorButton").addEventListener("click", function () {
-        attention.error({msg: "Oooops"});
+        let html = `
+        <form id="check-availability-form" action="" method="post" novalidate class="needs-validation search-form search-form">
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-row" id="reservation-dates-modal">
+                        <div class="col-sm-6">
+                            <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival" autocomplete=
+"off"
+>
+                        </div>
+                        <div class="col-sm-6">
+                            <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure" autocomplete=
+"off"
+>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        `
+
+        attention.custom({msg: html, title: "Choose your dates"});
     });
 
     const elem = document.getElementById("reservation-dates");
@@ -231,10 +260,48 @@
             })
         }
 
+        async function custom(c) {
+            const {
+                msg = "",
+                title = "",
+            } = c;
+
+            const {value: formValues} = await Swal.fire({
+                title: title,
+                html: msg,
+                backdrop: false,
+                focusConfirm: false,
+                showCancelButton: true,
+                willOpen: () => {
+                    const elem = document.getElementById("reservation-dates-modal");
+                    const rp = new DateRangePicker(elem, {
+                        format: 'yyyy-mm-dd',
+                        showOnFocus: true,
+                        todayBtn: true,
+                    })
+                },
+                preConfirm: () => {
+                    return [
+                        document.getElementById('start').value,
+                        document.getElementById('end').value
+                    ]
+                },
+                didOpen: () => {
+                    document.getElementById("start").removeAttribute("disabled");
+                    document.getElementById("end").removeAttribute("disabled");
+                }
+            })
+
+            if (formValues) {
+                Swal.fire(JSON.stringify(formValues))
+            }
+        }
+
         return {
             toast: toast,
             success: success,
             error: error,
+            custom: custom,
         }
     }
 
