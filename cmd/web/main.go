@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/alexedwards/scs/v2"
-	"github.com/ppichugin/booking-for-breakfast/pkg/config"
-	"github.com/ppichugin/booking-for-breakfast/pkg/handlers"
-	"github.com/ppichugin/booking-for-breakfast/pkg/render"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/alexedwards/scs/v2"
+
+	"github.com/ppichugin/booking-for-breakfast/pkg/config"
+	"github.com/ppichugin/booking-for-breakfast/pkg/handlers"
+	"github.com/ppichugin/booking-for-breakfast/pkg/render"
 )
 
 const portNumber = ":8080"
@@ -31,6 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatal("can not create template cache")
 	}
+
 	app.TemplateCache = tc
 	app.UseCache = false
 

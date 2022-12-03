@@ -2,12 +2,13 @@ package render
 
 import (
 	"bytes"
-	"github.com/ppichugin/booking-for-breakfast/pkg/config"
-	"github.com/ppichugin/booking-for-breakfast/pkg/models"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/ppichugin/booking-for-breakfast/pkg/config"
+	"github.com/ppichugin/booking-for-breakfast/pkg/models"
 )
 
 var functions = template.FuncMap{}
@@ -37,7 +38,7 @@ func RenderTemplate(w http.ResponseWriter, templateName string, td *models.Templ
 	// get requested template from cache
 	t, ok := tc[templateName]
 	if !ok {
-		log.Fatal("Could not get template from teh template cache")
+		log.Fatal("Could not get template from the template cache: ", templateName)
 	}
 
 	buf := new(bytes.Buffer)
@@ -55,9 +56,7 @@ func RenderTemplate(w http.ResponseWriter, templateName string, td *models.Templ
 }
 
 func CreateTemplate() (map[string]*template.Template, error) {
-
 	myCache := map[string]*template.Template{}
-
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
 	if err != nil {
 		return myCache, err
@@ -65,6 +64,7 @@ func CreateTemplate() (map[string]*template.Template, error) {
 
 	for _, page := range pages {
 		name := filepath.Base(page)
+
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return myCache, err
@@ -72,6 +72,7 @@ func CreateTemplate() (map[string]*template.Template, error) {
 
 		matches, err := filepath.Glob("./templates/*.layout.tmpl")
 		if err != nil {
+			//log.Println("Couldn't process './templates/*.layout.tmpl'")
 			return myCache, err
 		}
 
@@ -81,7 +82,6 @@ func CreateTemplate() (map[string]*template.Template, error) {
 				return myCache, err
 			}
 		}
-
 		myCache[name] = ts
 	}
 
