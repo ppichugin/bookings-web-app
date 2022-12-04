@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ppichugin/booking-for-breakfast/pkg/config"
-	"github.com/ppichugin/booking-for-breakfast/pkg/models"
-	"github.com/ppichugin/booking-for-breakfast/pkg/render"
+	"github.com/ppichugin/booking-for-breakfast/internal/config"
+	"github.com/ppichugin/booking-for-breakfast/internal/models"
+	"github.com/ppichugin/booking-for-breakfast/internal/render"
 )
 
 // Repo the repository used by handlers

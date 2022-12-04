@@ -9,8 +9,8 @@ import (
 
 	"github.com/justinas/nosurf"
 
-	"github.com/ppichugin/booking-for-breakfast/pkg/config"
-	"github.com/ppichugin/booking-for-breakfast/pkg/models"
+	"github.com/ppichugin/booking-for-breakfast/internal/config"
+	"github.com/ppichugin/booking-for-breakfast/internal/models"
 )
 
 var functions = template.FuncMap{}

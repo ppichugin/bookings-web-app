@@ -6,8 +6,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/ppichugin/booking-for-breakfast/pkg/config"
-	"github.com/ppichugin/booking-for-breakfast/pkg/handlers"
+	"github.com/ppichugin/booking-for-breakfast/internal/config"
+	"github.com/ppichugin/booking-for-breakfast/internal/handlers"
 )
 
 func routes(app *config.AppConfig) http.Handler {

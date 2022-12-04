@@ -8,9 +8,9 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 
-	"github.com/ppichugin/booking-for-breakfast/pkg/config"
-	"github.com/ppichugin/booking-for-breakfast/pkg/handlers"
-	"github.com/ppichugin/booking-for-breakfast/pkg/render"
+	"github.com/ppichugin/booking-for-breakfast/internal/config"
+	"github.com/ppichugin/booking-for-breakfast/internal/handlers"
+	"github.com/ppichugin/booking-for-breakfast/internal/render"
 )
 
 const portNumber = ":8080"
