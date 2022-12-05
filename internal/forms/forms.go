@@ -8,7 +8,7 @@ import (
 // Form creates a custom form struct, embeds url.Values object
 type Form struct {
 	url.Values
-	errors
+	Errors
 }
 
 // New initializes a form structure
@@ -23,7 +23,13 @@ func New(data url.Values) *Form {
 func (f *Form) Has(field string, r *http.Request) bool {
 	x := r.Form.Get(field)
 	if x == "" {
+		f.Errors.Add(field, "This is field can not be blank")
 		return false
 	}
 	return true
+}
+
+// Valid return true if there are no Errors, otherwise false
+func (f *Form) Valid() bool {
+	return len(f.Errors) == 0
 }
