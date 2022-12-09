@@ -7,4 +7,5 @@ This is the repository for booking & reservation project
 - Uses [Alex Edwards SCS session management](https://github.com/alexedwards/scs/v2)
 - Uses [nosurf](https://github.com/justinas/nosurf)
 - Uses [SweetAlert2](https://sweetalert2.github.io/)
+- Uses [govalidator](https://github.com/asaskevich/govalidator/)
 
