@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/ppichugin/booking-for-breakfast/internal/config"
 	"github.com/ppichugin/booking-for-breakfast/internal/handlers"
+	"github.com/ppichugin/booking-for-breakfast/internal/models"
 	"github.com/ppichugin/booking-for-breakfast/internal/render"
 )
 
@@ -19,6 +21,9 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	// what am I going to put into a session
+	gob.Register(models.Reservation{})
+
 	//change this to true when in production
 	app.InProduction = false
 
