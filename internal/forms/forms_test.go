@@ -56,11 +56,8 @@ func TestForm_Required(t *testing.T) {
 }
 
 func TestForm_IsEmail(t *testing.T) {
-	r := httptest.NewRequest("POST", "/whatever", nil)
-
 	type fields struct {
-		Values *http.Request
-		Email  string
+		Email string
 	}
 
 	tests := []struct {
@@ -68,19 +65,17 @@ func TestForm_IsEmail(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{name: "email_valid", fields: fields{r, "test@test.com"}, want: ""},
-		{name: "email_valid", fields: fields{r, "my@email.kz"}, want: ""},
-		{name: "email_not_valid.", fields: fields{r, "test@testcom"}, want: "Invalid email address"},
-		{name: "email_not_valid", fields: fields{r, "test@test"}, want: "Invalid email address"},
-		{name: "email_not_valid", fields: fields{r, "test"}, want: "Invalid email address"},
+		{name: "email_valid", fields: fields{"test@test.com"}, want: ""},
+		{name: "email_valid", fields: fields{"my@email.kz"}, want: ""},
+		{name: "email_not_valid.", fields: fields{"test@testcom"}, want: "Invalid email address"},
+		{name: "email_not_valid", fields: fields{"test@test"}, want: "Invalid email address"},
+		{name: "email_not_valid", fields: fields{"test"}, want: "Invalid email address"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			postedData := url.Values{}
 			postedData.Add("email", tt.fields.Email)
-
-			tt.fields.Values.PostForm = postedData
-			form := New(r.PostForm)
+			form := New(postedData)
 			form.IsEmail("email")
 			if got := form.Errors.Get("email"); got != tt.want {
 				t.Errorf("IsEmail() = %v, want %v", got, tt.want)
@@ -90,7 +85,6 @@ func TestForm_IsEmail(t *testing.T) {
 }
 
 func TestForm_MinLength(t *testing.T) {
-	r := httptest.NewRequest("POST", "/whatever", nil)
 	type fields struct {
 		Values url.Values
 		Errors errors
@@ -114,9 +108,8 @@ func TestForm_MinLength(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			postedData := url.Values{}
 			postedData.Add(tt.args.field, tt.args.value)
-			r.Form = postedData
-			f := New(r.Form)
-			if got := f.MinLength(tt.args.field, tt.args.length, r); got != tt.want {
+			f := New(postedData)
+			if got := f.MinLength(tt.args.field, tt.args.length); got != tt.want {
 				t.Errorf("MinLength() = %v, want %v", got, tt.want)
 			}
 		})
@@ -124,7 +117,6 @@ func TestForm_MinLength(t *testing.T) {
 }
 
 func TestForm_Has(t *testing.T) {
-	r := httptest.NewRequest("POST", "/whatever", nil)
 	type fields struct {
 		Values url.Values
 		Errors errors
@@ -139,16 +131,15 @@ func TestForm_Has(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"String is not empty", fields{}, args{"Name", "Surname"}, true},
-		{"String is empty", fields{}, args{"Name", ""}, false},
+		{"Field is not empty", fields{}, args{"Name", "Surname"}, true},
+		{"Field is empty", fields{}, args{"Name", ""}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			postedData := url.Values{}
 			postedData.Add(tt.args.field, tt.args.value)
-			r.Form = postedData
-			f := New(r.Form)
-			if got := f.Has(tt.args.field, r); got != tt.want {
+			f := New(postedData)
+			if got := f.Has(tt.args.field); got != tt.want {
 				t.Errorf("Has() = %v, want %v", got, tt.want)
 			}
 		})
