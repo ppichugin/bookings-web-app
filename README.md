@@ -1,6 +1,6 @@
-# Bookings and reservations projects
+# Bookings and reservations
 
-This is the repository for booking & reservation project
+This is the repository for Bookings & reservation of rooms Web App
 
 - Built in Go version 1.19
 - Uses [chi router](https://github.com/go-chi/chi/v5)
@@ -9,3 +9,4 @@ This is the repository for booking & reservation project
 - Uses [SweetAlert2](https://sweetalert2.github.io/)
 - Uses [govalidator](https://github.com/asaskevich/govalidator/)
 - Uses [Buffalo (Soda)](https://gobuffalo.io/documentation/database/soda/)
+- Uses [pgx v.5](https://github.com/jackc/pgx)
