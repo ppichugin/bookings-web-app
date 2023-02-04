@@ -6,10 +6,13 @@ import (
 	"net/http"
 
 	"github.com/ppichugin/booking-for-breakfast/internal/config"
+	"github.com/ppichugin/booking-for-breakfast/internal/driver"
 	"github.com/ppichugin/booking-for-breakfast/internal/forms"
 	"github.com/ppichugin/booking-for-breakfast/internal/helpers"
 	"github.com/ppichugin/booking-for-breakfast/internal/models"
 	"github.com/ppichugin/booking-for-breakfast/internal/render"
+	"github.com/ppichugin/booking-for-breakfast/internal/repository"
+	"github.com/ppichugin/booking-for-breakfast/internal/repository/dbrepo"
 )
 
 // Repo the repository used by handlers
@@ -18,12 +21,14 @@ var Repo *Repository
 // Repository is the repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // NewRepo creates new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 

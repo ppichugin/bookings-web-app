@@ -11,6 +11,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 
 	"github.com/ppichugin/booking-for-breakfast/internal/config"
+	"github.com/ppichugin/booking-for-breakfast/internal/driver"
 	"github.com/ppichugin/booking-for-breakfast/internal/handlers"
 	"github.com/ppichugin/booking-for-breakfast/internal/helpers"
 	"github.com/ppichugin/booking-for-breakfast/internal/models"
@@ -25,10 +26,12 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 
 func main() {
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer db.SQL.Close()
 
 	fmt.Println("Starting application on port", portNumber)
 
@@ -41,7 +44,7 @@ func main() {
 	log.Fatal(err)
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// what am I going to put into a session
 	gob.Register(models.Reservation{})
 
@@ -60,19 +63,27 @@ func run() error {
 	session.Cookie.Secure = app.InProduction // ssl not yet
 	app.Session = session
 
+	// connect to Database
+	log.Println("Connecting to Database...")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=pg password=pg")
+	if err != nil {
+		log.Fatal("Can not connect to Database!")
+	}
+	log.Println("Connected to database!")
+
 	tc, err := render.CreateTemplate()
 	if err != nil {
 		log.Fatal("can not create template cache")
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tc
 	app.UseCache = false
 
-	repo := handlers.NewRepo(&app)
+	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 	render.NewTemplates(&app)
 	helpers.NewHelpers(&app)
 
-	return nil
+	return db, nil
 }
