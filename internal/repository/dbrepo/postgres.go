@@ -38,7 +38,7 @@ func (m *postgresDBRepo) InsertReservation(res models.Reservation) (int, error) 
 	return newID, nil
 }
 
-// InsertRoomRestriction inserts a new room restriction into the database
+// InsertRoomRestriction inserts a new room restriction into the database.
 func (m *postgresDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -60,4 +60,26 @@ func (m *postgresDBRepo) InsertRoomRestriction(r models.RoomRestriction) error {
 	}
 
 	return nil
+}
+
+// SearchAvailabilityByDates returns true if room with roomID is available, and false otherwise.
+func (m *postgresDBRepo) SearchAvailabilityByDates(start, end time.Time, roomID int) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		select count(id)
+		from room_restrictions
+		where
+		    room_id = $1 and ($2 < end_date and $3 > start_date)`
+
+	var numRows int
+	row := m.DB.QueryRowContext(ctx, query,
+		roomID, start, end)
+	err := row.Scan(&numRows)
+	if err != nil {
+		return false, err
+	}
+
+	return numRows == 0, nil
 }
