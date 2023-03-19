@@ -1,2 +1,2 @@
-go build -o build/bookings.exe ./cmd/web/. || exit /b
-.\build\bookings.exe
+go build -o build/bookings ./cmd/web/. || exit /b
+./build/bookings
